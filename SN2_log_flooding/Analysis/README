@@ -1,0 +1,11 @@
+# calculate ECDF
+
+python3 ecdf.py --file crossing-times.dat --out ecdf.dat
+
+# fit to logarithmic model for boost 
+
+python3 fit_log_boost.py --file ecdf.dat --out tcdf.dat
+
+# bootstrap to find 30th and 70th percentile:
+
+python3 fit_log_bootstrap.py --file crossing-times.dat

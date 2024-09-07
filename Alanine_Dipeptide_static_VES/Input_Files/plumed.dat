@@ -1,0 +1,48 @@
+MOLINFO STRUCTURE=diala.pdb
+
+# Compute the backbone dihedral angle phi, defined by atoms C-N-CA-C
+phi: TORSION ATOMS=5,7,9,15
+# Compute the backbone dihedral angle psi, defined by atoms N-CA-C-N
+psi: TORSION ATOMS=7,9,15,17
+
+
+# For this test we will bias in phi direction only 
+bf_fourier: BF_FOURIER MINIMUM=-pi MAXIMUM=pi ORDER=20
+
+# Target distribution
+td: TD_UNIFORM
+
+VES_LINEAR_EXPANSION ...
+  LABEL=ves
+  ARG=phi
+#  COEFFS=start_coeffs.dat    
+  BASIS_FUNCTIONS=bf_fourier
+  BIAS_CUTOFF=__Vmax__   
+  TEMP=260
+  GRID_BINS=300
+  TARGET_DISTRIBUTION=td
+... VES_LINEAR_EXPANSION
+
+OPT_AVERAGED_SGD ...
+  LABEL=opt
+  BIAS=ves
+  STRIDE=500
+  STEPSIZE=0.1
+  FES_OUTPUT=500
+  BIAS_OUTPUT=100
+  COEFFS_OUTPUT=50
+  TARGETDIST_STRIDE=100
+  TARGETDIST_OUTPUT=100
+... OPT_AVERAGED_SGD
+
+COMMITTOR ...
+   ARG=phi,psi
+   STRIDE=100
+   BASIN_LL1=0.05,-2
+   BASIN_UL1=1.5,0.54
+...
+
+# print everything
+PRINT ARG=phi,psi,ves.* FILE=COLVAR STRIDE=100
+
+

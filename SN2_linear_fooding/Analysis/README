@@ -1,0 +1,11 @@
+#calculate ECDF from crossing times:
+
+python3 ecdf.py --file crossing-times.dat --out ecdf.dat
+
+#perform fit to linear boost model:
+
+python3 fit_linear_boost.py --file ecdf.dat --out tcdf.dat 
+
+#perform bootstrap:
+
+python3 fit_linear_bootstrap.py --file crossing-times.dat  
